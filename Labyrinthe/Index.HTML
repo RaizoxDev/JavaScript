@@ -1,0 +1,105 @@
+<!DOCTYPE html> <!-- Déclare le type de document HTML -->
+<html lang="fr"> <!-- Début du document HTML avec la langue française spécifiée pour le bon affichage des accents -->
+<head>
+    <meta charset="UTF-8"> <!-- Définit l'encodage des caractères pour éviter les problèmes d'affichage des caractères spéciaux -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Assure une adaptation correcte de la mise en page sur les appareils mobiles -->
+    <title>Jeu - Labyrinthe</title> <!-- Définit le titre affiché dans l'onglet du navigateur -->
+    <style>
+        body {
+            font-family: Arial, sans-serif; /* Définit la police de caractères pour le texte de la page */
+            text-align: center; /* Centre le texte pour un affichage harmonieux */
+            margin-top: 50px; /* Ajoute un espace en haut de la page pour un meilleur rendu visuel */
+        }
+        canvas {
+            border: 2px solid #000; /* Ajoute une bordure noire autour du canvas pour bien le démarquer */
+            margin-top: 20px; /* Ajoute un espace entre le texte et le canvas */
+        }
+    </style>
+</head>
+<body>
+    <h1>Jeu - Labyrinthe</h1> <!-- Affiche un titre principal pour le jeu -->
+    <p>Déplacez le carré bleu (votre personnage) jusqu'à la sortie (carré rouge) en utilisant les touches fléchées.</p>
+    <canvas id="toileDeJeu" width="400" height="400"></canvas> <!-- Définit la zone de dessin où le jeu s'affichera -->
+
+    <script>
+        const toileDeJeu = document.getElementById('toileDeJeu'); // Sélectionne l'élément canvas par son ID
+        const contexte = toileDeJeu.getContext('2d'); // Obtient le contexte de rendu en 2D pour dessiner dessus
+        const tailleGrille = 20; // Définit la taille de chaque cellule de la grille en pixels
+        const lignes = toileDeJeu.height / tailleGrille; // Calcule le nombre total de lignes en fonction de la hauteur du canvas
+        const colonnes = toileDeJeu.width / tailleGrille; // Calcule le nombre total de colonnes en fonction de la largeur du canvas
+
+        let joueur = { x: 1, y: 1 }; // Position initiale du joueur dans la grille
+        let sortie = { x: colonnes - 3, y: lignes - 3 }; // Position de la sortie à l'autre extrémité du labyrinthe
+        let labyrinthe = genererLabyrinthe(lignes, colonnes); // Génère le labyrinthe et stocke les données dans une matrice
+
+        function genererLabyrinthe(lignes, colonnes) {
+            let labyrinthe = Array.from({ length: lignes }, () => Array(colonnes).fill(1)); // Initialise une grille remplie de murs (valeur 1)
+            const directions = [
+                { dx: 0, dy: -1 }, // Déplacement vers le haut
+                { dx: 1, dy: 0 },  // Déplacement vers la droite
+                { dx: 0, dy: 1 },  // Déplacement vers le bas
+                { dx: -1, dy: 0 }  // Déplacement vers la gauche
+            ];
+
+            function dfs(x, y) {
+                labyrinthe[y][x] = 0; // Marque la cellule actuelle comme un passage (0)
+                directions.sort(() => Math.random() - 0.5); // Mélange les directions pour rendre le labyrinthe aléatoire
+                for (const { dx, dy } of directions) {
+                    const nx = x + dx * 2; // Coordonnée X de la cellule suivante
+                    const ny = y + dy * 2; // Coordonnée Y de la cellule suivante
+                    if (nx > 0 && ny > 0 && nx < colonnes - 1 && ny < lignes - 1 && labyrinthe[ny][nx] === 1) {
+                        labyrinthe[ny][nx] = 0; // Creuse un passage
+                        labyrinthe[y + dy][x + dx] = 0; // Ouvre la cellule intermédiaire pour éviter des murs isolés
+                        dfs(nx, ny); // Appelle récursivement la fonction pour continuer la génération du labyrinthe
+                    }
+                }
+            }
+            dfs(1, 1); // Débute la génération du labyrinthe depuis la position (1,1)
+            return labyrinthe;
+        }
+
+        function dessinerLabyrinthe() {
+            contexte.clearRect(0, 0, toileDeJeu.width, toileDeJeu.height); // Efface le canvas pour le redessiner proprement
+            for (let y = 0; y < lignes; y++) {
+                for (let x = 0; x < colonnes; x++) {
+                    if (labyrinthe[y][x] === 1) {
+                        contexte.fillStyle = 'black'; // Définit la couleur des murs en noir
+                        contexte.fillRect(x * tailleGrille, y * tailleGrille, tailleGrille, tailleGrille); // Dessine un mur
+                    }
+                }
+            }
+            contexte.fillStyle = 'blue'; // Définit la couleur du joueur en bleu
+            contexte.fillRect(joueur.x * tailleGrille, joueur.y * tailleGrille, tailleGrille, tailleGrille); // Dessine le joueur
+            contexte.fillStyle = 'red'; // Définit la couleur de la sortie en rouge
+            contexte.fillRect(sortie.x * tailleGrille + 4, sortie.y * tailleGrille + 4, tailleGrille - 8, tailleGrille - 8); // Dessine la sortie
+        }
+
+        function deplacerJoueur(dx, dy) {
+            const nouvelleX = joueur.x + dx; // Calcule la nouvelle position X
+            const nouvelleY = joueur.y + dy; // Calcule la nouvelle position Y
+            if (nouvelleX >= 0 && nouvelleY >= 0 && nouvelleX < colonnes && nouvelleY < lignes && labyrinthe[nouvelleY][nouvelleX] === 0) {
+                joueur.x = nouvelleX; // Applique le déplacement du joueur si possible
+                joueur.y = nouvelleY;
+                verifierSortie(); // Vérifie si le joueur est arrivé à la sortie
+            }
+        }
+
+        function verifierSortie() {
+            if (joueur.x === sortie.x && joueur.y === sortie.y) {
+                alert("Bravo ! Vous avez trouvé la sortie !"); // Affiche un message de victoire
+                reinitialiserJeu(); // Réinitialise le jeu après la victoire
+            }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowUp') deplacerJoueur(0, -1); // Déplace vers le haut
+            if (e.key === 'ArrowDown') deplacerJoueur(0, 1); // Déplace vers le bas
+            if (e.key === 'ArrowLeft') deplacerJoueur(-1, 0); // Déplace vers la gauche
+            if (e.key === 'ArrowRight') deplacerJoueur(1, 0); // Déplace vers la droite
+            dessinerLabyrinthe(); // Redessine le labyrinthe après déplacement
+        });
+
+        dessinerLabyrinthe(); // Dessine le labyrinthe au chargement initial
+    </script>
+</body>
+</html>

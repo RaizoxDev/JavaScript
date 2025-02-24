@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    body {
+font-family: Arial, sans-serif;
+text-align: center;
+}
+
+.board {
+display: grid;
+grid-template-columns: repeat(7, 60px);
+grid-template-rows: repeat(6, 60px);
+gap: 5px;
+margin: 20px auto;
+width: 450px;
+background: #0055aa;
+padding: 10px;
+border-radius: 10px;
+}
+
+.cell {
+width: 60px;
+height: 60px;
+background: white;
+border-radius: 50%;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 2em;
+font-weight: bold;
+cursor: pointer;
+}
+
+.red {
+background: red;
+}
+
+.yellow {
+background: yellow;
+}
+
+button {
+padding: 10px 20px;
+font-size: 1.2em;
+background: #007bff;
+color: white;
+border: none;
+cursor: pointer;
+margin-top: 20px;
+}
+
+button:hover {
+background: #0056b3;
+}
+
+</style>
+<body>
+    <h1>Puissance 4</h1>
+    <h2 id="status">Tours du Joueur</h2>
+    <div class="board"></div>
+    <button id="restart">Rejouer</button>
+</body>
+<script src="Connect4.JS"></script>
+</html>
