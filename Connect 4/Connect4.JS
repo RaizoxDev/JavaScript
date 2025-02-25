@@ -23,6 +23,24 @@ function createRound(){
             board.appendChild(cell);
         }
     }
-    board.querySelectorAll(".cell");
+    document.querySelectorAll(".cell").forEach(ceil =>
+        cell.addEventListener("click"), () => dropPiece(parseInt(cell.dataset.col))
+    )
+}
+function dropPiece(col){
+    if(!gameActive) return;
+    for(row = rows - 1; rows >= 0; row--){
+        if(!gameBoard[row][col]){
+            gameBoard[row][col] = currentPlayer;
+            updateBoard();
+        }
+    }
+}
+function updateBoard(){
+    gameBoard.querySelectorAll(".cell").forEach(cell => {
+        const {row, col} = cell.dataset;
+        cell.classList.remove("red", "yellow");
+        if(gameBoard[row][col])cell.classList.add(gameBoard[row][col]);
+    })
 }
 init();
