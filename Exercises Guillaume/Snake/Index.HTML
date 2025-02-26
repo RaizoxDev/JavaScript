@@ -30,30 +30,8 @@
 
         let joueur = {x: 10, y: 10};
         let point =  {x: Math.floor(Math.random(toileDeJeu) * tailleGrille), y: Math.floor(Math.random(toileDeJeu) * tailleGrille)};
-        let snake = genererSnake(lignes, colonnes);
-
-        function genererSnake(lignes, colonnes) {
-            let snake = Array.from({ length: lignes }, () => Array(colonnes).fill(1));
-            const directions = [
-                { dx: 0, dy: -1 },
-                { dx: 1, dy: 0 },
-                { dx: 0, dy: 1 },
-                { dx: -1, dy: 0 }
-            ];
-        }
-        function coordonneeAleatoire(max){
-            return Math.floor(Math.random() * max);
-        }
-
-        function genererPoint(){
-            let px = coordonneeAleatoire(toileDeJeu) * tailleGrille;
-            let py = coordonneeAleatoire(toileDeJeu) * tailleGrille;
-        }
-        
+ 
         function dessinerSnake(){
-            contexte.clearRect(0, 0, toileDeJeu.width, toileDeJeu.height);
-            genererPoint();
-
             contexte.fillStyle = 'black';
             contexte.fillRect(joueur.x * tailleGrille, joueur.y * tailleGrille, tailleGrille, tailleGrille);
             contexte.fillStyle = 'red';
@@ -63,7 +41,7 @@
             function deplacerJoueur(dx, dy) {
             const nouvelleX = joueur.x + dx;
             const nouvelleY = joueur.y + dy;
-            if (nouvelleX >= 0 && nouvelleY >= 0 && nouvelleX < colonnes && nouvelleY < lignes && snake[nouvelleY][nouvelleX] === 0) {
+            if (nouvelleX >= 0 && nouvelleY >= 0 && nouvelleX < colonnes && nouvelleY < lignes && snake[nouvelleY][nouvelleX] === 0){
                 joueur.x = nouvelleX;
                 joueur.y = nouvelleY;
                 verifierPoint();
@@ -73,9 +51,11 @@
         function verifierPoint() {
             if (joueur.x === sortie.x && joueur.y === sortie.y) {
                 
-                genererPoint();
+                let point =  {x: Math.floor(Math.random(toileDeJeu) * tailleGrille), y: Math.floor(Math.random(toileDeJeu) * tailleGrille)}; 
             }
         }
+        let intervalleDeplacement;
+        let direction = {x: 0, y: 0};
         document.addEventListener('keydown', (e) => {
             if (intervalleDeplacement) clearInterval(intervalleDeplacement);
             if (e.key === 'ArrowUp') deplacerJoueur(0, -1);
@@ -84,12 +64,11 @@
             if (e.key === 'ArrowRight') deplacerJoueur(1, 0);
             
             intervalleDeplacement = setInterval(() => {
-                deplacerJoueur(direction.x, direction.y);   
+                deplacerJoueur(direction.x, direction.y);
+                dessinerSnake();
             }, 500);
         });
-
-
-        dessinerSnake();
+    dessinerSnake();
     </script>
 </body>
 </html>
