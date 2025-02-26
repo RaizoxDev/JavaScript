@@ -17,8 +17,8 @@
     }
     </style>
 <body>
-    <h1>Jeu - Labyrinthe</h1>
-    <p>Déplacez le carré bleu (votre personnage) jusqu'à la sortie (carré rouge) en utilisant les touches fléchées.</p>
+    <h1>Jeu - Snake</h1>
+    <p>Déplacez le serpent (carré noir) jusqu'au fruits (carré rouge) en utilisant les touches fléchées.</p>
     <canvas id="toileDeJeu" width="400" height="400"></canvas>
 
     <script>
@@ -28,8 +28,8 @@
         const lignes = toileDeJeu.height / tailleGrille;
         const colonnes = toileDeJeu.width / tailleGrille;
 
-        let joueur = { x: 10, y: 10 };
-        let point = { x: colonnes - 3, y: lignes - 3 }
+        let joueur = {x: 10, y: 10};
+        let point =  {x: Math.floor(Math.random(toileDeJeu) * tailleGrille), y: Math.floor(Math.random(toileDeJeu) * tailleGrille)};
         let snake = genererSnake(lignes, colonnes);
 
         function genererSnake(lignes, colonnes) {
@@ -41,17 +41,19 @@
                 { dx: -1, dy: 0 }
             ];
         }
+        function coordonneeAleatoire(max){
+            return Math.floor(Math.random() * max);
+        }
 
-        function snake() {
-            contexte.clearRect(0, 0, toileDeJeu.width, toileDeJeu.height); // Efface le canvas pour le redessiner proprement
-            for (let y = 0; y < lignes; y++) {
-                for (let x = 0; x < colonnes; x++) {
-                    if (labyrinthe[y][x] === 1) {
-                        contexte.fillStyle = 'black'; // Définit la couleur des murs en noir
-                        contexte.fillRect(x * tailleGrille, y * tailleGrille, tailleGrille, tailleGrille); // Dessine un mur
-                    }
-                }
-            }
+        function genererPoint(){
+            let px = coordonneeAleatoire(toileDeJeu) * tailleGrille;
+            let py = coordonneeAleatoire(toileDeJeu) * tailleGrille;
+        }
+        
+        function dessinerSnake(){
+            contexte.clearRect(0, 0, toileDeJeu.width, toileDeJeu.height);
+            genererPoint();
+
             contexte.fillStyle = 'black';
             contexte.fillRect(joueur.x * tailleGrille, joueur.y * tailleGrille, tailleGrille, tailleGrille);
             contexte.fillStyle = 'red';
@@ -61,7 +63,7 @@
             function deplacerJoueur(dx, dy) {
             const nouvelleX = joueur.x + dx;
             const nouvelleY = joueur.y + dy;
-            if (nouvelleX >= 0 && nouvelleY >= 0 && nouvelleX < colonnes && nouvelleY < lignes && labyrinthe[nouvelleY][nouvelleX] === 0) {
+            if (nouvelleX >= 0 && nouvelleY >= 0 && nouvelleX < colonnes && nouvelleY < lignes && snake[nouvelleY][nouvelleX] === 0) {
                 joueur.x = nouvelleX;
                 joueur.y = nouvelleY;
                 verifierPoint();
@@ -70,7 +72,8 @@
 
         function verifierPoint() {
             if (joueur.x === sortie.x && joueur.y === sortie.y) {
-                contexte.fillRect(point.x * tailleGrille + 4, point.y * tailleGrille + 4, tailleGrille - 8, tailleGrille - 8);
+                
+                genererPoint();
             }
         }
         document.addEventListener('keydown', (e) => {
@@ -81,8 +84,7 @@
             if (e.key === 'ArrowRight') deplacerJoueur(1, 0);
             
             intervalleDeplacement = setInterval(() => {
-                deplacerJoueur(direction.x, direction.y);
-                dessinerSnake();
+                deplacerJoueur(direction.x, direction.y);   
             }, 500);
         });
 
