@@ -30,12 +30,15 @@
 
         let joueur = {x: 10, y: 10};
         let point =  {x: Math.floor(Math.random(toileDeJeu) * tailleGrille), y: Math.floor(Math.random(toileDeJeu) * tailleGrille)};
+        let segment;
  
         function dessinerSnake(){
             contexte.fillStyle = 'black';
             contexte.fillRect(joueur.x * tailleGrille, joueur.y * tailleGrille, tailleGrille, tailleGrille);
             contexte.fillStyle = 'red';
             contexte.fillRect(point.x * tailleGrille + 4, point.y * tailleGrille + 4, tailleGrille - 8, tailleGrille - 8);
+            contexte.fillStyle = 'black';
+            contexte.fillRect(segment.x * tailleGrille, segment.y * tailleGrille, tailleGrille, tailleGrille);
         }
 
             function deplacerJoueur(dx, dy) {
@@ -49,15 +52,15 @@
         }
 
         function verifierPoint() {
-            if (joueur.x === sortie.x && joueur.y === sortie.y) {
-                
+            if (joueur.x === point.x && joueur.y === point.y) {
+                // Ajouter un segment suivant le joueur
                 let point =  {x: Math.floor(Math.random(toileDeJeu) * tailleGrille), y: Math.floor(Math.random(toileDeJeu) * tailleGrille)}; 
             }
         }
         let intervalleDeplacement;
         let direction = {x: 0, y: 0};
         document.addEventListener('keydown', (e) => {
-            if (intervalleDeplacement) clearInterval(intervalleDeplacement);
+            if (intervalleDeplacement) clearInterval(intervalleDeplacement); // Déplacement buggé, ne fonctionne pas.
             if (e.key === 'ArrowUp') deplacerJoueur(0, -1);
             if (e.key === 'ArrowDown') deplacerJoueur(0, 1);
             if (e.key === 'ArrowLeft') deplacerJoueur(-1, 0);
