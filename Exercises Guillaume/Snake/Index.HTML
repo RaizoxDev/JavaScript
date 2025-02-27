@@ -53,7 +53,7 @@
 
         function verifierPoint() {
             if (joueur.x === point.x && joueur.y === point.y) {
-                // Ajouter un segment suivant le joueur
+                // Ajouter un segment suivant le joueur en différé.
                 let point =  {x: Math.floor(Math.random(toileDeJeu) * tailleGrille), y: Math.floor(Math.random(toileDeJeu) * tailleGrille)}; 
             }
         }
@@ -71,6 +71,13 @@
                 dessinerSnake();
             }, 500);
         });
+
+        if(segment.x === joueur.x && segment.y === joueur.y){
+            window.alert("Game Over !");
+        }
+        if(joueur.x > 20 || joueur.x < 0 || joueur.y > 20 || joueur.y < 0){
+            window.alert("Game Over !");
+        }
     dessinerSnake();
     </script>
 </body>
