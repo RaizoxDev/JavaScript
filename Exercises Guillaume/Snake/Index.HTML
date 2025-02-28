@@ -53,7 +53,9 @@
 
         function verifierPoint() {
             if (joueur.x === point.x && joueur.y === point.y) {
-                // Ajouter un segment suivant le joueur en différé.
+                // Check si un segment est déjà présent.
+                // Ajouter un segment suivant le joueur en différé si un ségment n'est pas présent.
+                // Sinon, ajouté un segment derrière le dernier segment généré.
                 let point =  {x: Math.floor(Math.random(toileDeJeu) * tailleGrille), y: Math.floor(Math.random(toileDeJeu) * tailleGrille)}; 
             }
         }
